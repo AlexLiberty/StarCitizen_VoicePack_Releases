@@ -34,7 +34,7 @@
 
 🎥 [Демонстрація](https://youtu.be/4AwL8TKXcTU?si=ej6p6OPub3HoPYng)
 
-<img src="https://em-content.zobj.net/thumbs/240/apple/354/flag-ukraine_1f1fa-1f1e6.png" width="22" height="18" />  [Українізатор тексту для Star Citizen](https://scloc.pp.ua/)
+<img src="https://em-content.zobj.net/thumbs/240/apple/354/flag-ukraine_1f1fa-1f1e6.png" width="22" style="vertical-align: -3px;" /> [Українізатор тексту для Star Citizen](https://scloc.pp.ua/)
 
 🗣️ [Приєднуйтесь до найбільшої, активної української спільноти Star Citizen у Discord](https://discord.gg/y2c7M9cgbk)
 
