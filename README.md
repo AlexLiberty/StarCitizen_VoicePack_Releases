@@ -32,11 +32,11 @@
 
 Насолоджуйтесь грою з україномовним голосовим супроводом!
 
-🎥 [Демонстрація](https://youtu.be/4AwL8TKXcTU?si=ej6p6OPub3HoPYng)
+[![▶️ YouTube](https://img.shields.io/badge/_Демонстраційне_відео-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
 
-<img src="https://em-content.zobj.net/thumbs/240/apple/354/flag-ukraine_1f1fa-1f1e6.png" width="22" style="vertical-align: -3px;" /> [Українізатор тексту для Star Citizen](https://scloc.pp.ua/)
+[![UA](https://img.shields.io/badge/🇺🇦_Українізатор_для_Star_Citizen-0057B7?style=flat&labelColor=FFD700)](https://scloc.pp.ua/)
 
-🗣️ [Приєднуйтесь до найбільшої, активної української спільноти Star Citizen у Discord](https://discord.gg/y2c7M9cgbk)
+[![💬 Discord](https://img.shields.io/badge/_Приєднатись_до_найбільшої_україномовної_спільноти-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/y2c7M9cgbk)
 
 Зоряних пригод, Капітане! Зустрінемось серед зірок ✨
 
