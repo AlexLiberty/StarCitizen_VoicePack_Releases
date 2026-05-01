@@ -34,7 +34,7 @@
 
 [![▶️ YouTube](https://img.shields.io/badge/_Демонстраційне_відео-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
 
-[![UA](https://img.shields.io/badge/🇺🇦_Українізатор_для_Star_Citizen-0057B7?style=flat&labelColor=FFD700)](https://scloc.pp.ua/)
+[![UA](https://img.shields.io/badge/🇺🇦-Українізатор%20Star%20Citizen-0057B7?style=flat&labelColor=FFD700)](https://scloc.pp.ua/)
 
 [![💬 Discord](https://img.shields.io/badge/_Приєднатись_до_найбільшої_україномовної_спільноти-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/y2c7M9cgbk)
 
