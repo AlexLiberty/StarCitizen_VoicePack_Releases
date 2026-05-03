@@ -54,24 +54,31 @@ jobs:
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. ФІЛЬТР (залишаємо тільки потрібне) ---
+          # --- 2. ФІЛЬТР важливого ---
           FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
-            /ℹ️/ { print; next }
+            /Програма не втручається/ { print; next }
+            /повернуто озвучання/ { print; next }
+            /реферальним посиланням/ { print; next }
             /http/ { print; next }
           ')
 
-          # --- 3. Нормалізація переносів ---
+          # --- 3. fallback якщо нічого не знайдено ---
+          if [ -z "$FILTERED" ]; then
+            FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 15)
+          fi
+
+          # --- 4. нормалізація переносів ---
           FILTERED=$(echo "$FILTERED" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # --- 4. Trim (початок/кінець) ---
+          # --- 5. trim ---
           FORMATTED=$(echo "$FILTERED" \
             | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
 
-          # --- 5. Обрізка під Discord ---
+          # --- 6. обмеження під Discord ---
           FORMATTED=$(echo "$FORMATTED" | head -c 2000)
 
-          # --- 6. Формуємо embed ---
+          # --- 7. Embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -87,7 +94,7 @@ jobs:
               }]
             }')
 
-          # --- 7. Відправка ---
+          # --- 8. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
