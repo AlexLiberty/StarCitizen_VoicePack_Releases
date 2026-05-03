@@ -7,6 +7,7 @@ on:
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
+
     steps:
       - name: Send Discord Notification
         env:
@@ -15,16 +16,39 @@ jobs:
           RELEASE_BODY: ${{ github.event.release.body }}
           RELEASE_URL: ${{ github.event.release.html_url }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
+
         run: |
+          # 1. Чистимо markdown (видаляємо badges і картинки)
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
+          # 2. Виділяємо features (рядки з емодзі)
+          FEATURES=$(echo "$CLEAN_DESCRIPTION" \
+            | grep -E '^[[:space:]]*[✅❌⚠️ℹ️]' \
+            | sed 's/^[[:space:]]*/• /')
+
+          # 3. Основний опис (без списків)
+          DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
+            | grep -vE '^[[:space:]]*[✅❌⚠️ℹ️]' \
+            | sed '/^\s*$/d')
+
+          # 4. Обрізка під Discord limits
+          DESCRIPTION=$(echo "$DESCRIPTION" | head -c 900)
+          FEATURES=$(echo "$FEATURES" | head -c 900)
+
+          # fallback якщо пусто
+          if [ -z "$FEATURES" ]; then
+            FEATURES="—"
+          fi
+
+          # 5. Формуємо embed
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
-            --arg description "$CLEAN_DESCRIPTION" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
+            --arg desc "$DESCRIPTION" \
+            --arg features "$FEATURES" \
             --arg yt "https://youtu.be/4AwL8TKXcTU" \
             --arg loc "https://scloc.pp.ua/" \
             --arg dc "https://discord.gg/y2c7M9cgbk" \
@@ -35,6 +59,9 @@ jobs:
                 url: $url,
                 description: $version,
                 color: $color,
+                thumbnail: {
+                  url: "https://img.youtube.com/vi/4AwL8TKXcTU/hqdefault.jpg"
+                },
                 fields: [
                   {
                     name: "▶️ Демонстраційне відео",
@@ -52,14 +79,21 @@ jobs:
                     inline: false
                   },
                   {
-                    name: "📋 Зміни",
-                    value: (if ($description | length) > 1000 then ($description[0:1000] + "...") else $description end),
+                    name: "📖 Опис",
+                    value: $desc,
+                    inline: false
+                  },
+                  {
+                    name: "⚙️ Можливості",
+                    value: $features,
                     inline: false
                   }
                 ]
               }]
             }')
 
-          curl -X POST -H "Content-Type: application/json" \
+          # 6. Відправка
+          curl -X POST \
+            -H "Content-Type: application/json" \
             -d "$EMBED" \
             "$DISCORD_WEBHOOK"
