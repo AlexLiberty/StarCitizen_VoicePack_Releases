@@ -54,18 +54,25 @@ jobs:
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # нормалізація + обрізка
-          FORMATTED=$(echo "$CLEAN_DESCRIPTION" \
-            | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g' \
-            | sed -E ':a;/^\n*$/{$d;N;ba}' \
-            | head -c 3800)
+          # нормалізація переносів
+          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
+            | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # embed
+          # обрізка
+          FORMATTED=$(echo "$CLEAN_DESCRIPTION" \
+            | sed -E ':a;/^\n*$/{$d;N;ba}' \
+            | head -c 3500)
+
+          # стабільні лінки
+          LINKS=$(printf "\n\n[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)\n\n[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)\n\n[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)")
+
+          FINAL_BODY="$FORMATTED$LINKS"
+
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
-            --arg body "$FORMATTED" \
+            --arg body "$FINAL_BODY" \
             --argjson color 5814783 \
             '{
               embeds: [{
