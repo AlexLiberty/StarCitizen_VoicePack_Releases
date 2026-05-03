@@ -49,27 +49,36 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # --- 1. Очистка markdown (видаляємо badges/зображення) ---
+          # --- 1. Очистка markdown ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. Вставка лінків на місце (після "Насолоджуйтесь...") ---
-          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" | sed '/Насолоджуйтесь/ a\
-          \[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)\
-          \[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)\
-          \[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)\')
+          # --- 2. Вставка лінків (акуратно через awk) ---
+          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" | awk '
+          {
+            print
+            if ($0 ~ /Насолоджуйтесь/) {
+              print ""
+              print "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)"
+              print "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)"
+              print "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)"
+              print ""
+            }
+          }')
 
           # --- 3. Нормалізація переносів ---
           CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # --- 4. Прибираємо пусті рядки в кінці + обрізка ---
+          # --- 4. Прибираємо пусті рядки на початку/кінці ---
           FORMATTED=$(echo "$CLEAN_DESCRIPTION" \
-            | sed -E ':a;/^\n*$/{$d;N;ba}' \
-            | head -c 3800)
+            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
 
-          # --- 5. Embed ---
+          # --- 5. Обрізка ---
+          FORMATTED=$(echo "$FORMATTED" | head -c 3800)
+
+          # --- 6. Embed (без картинки) ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -81,14 +90,11 @@ jobs:
                 title: $title,
                 url: $url,
                 description: ($version + "\n\n" + $body),
-                color: $color,
-                thumbnail: {
-                  url: "https://img.youtube.com/vi/4AwL8TKXcTU/hqdefault.jpg"
-                }
+                color: $color
               }]
             }')
 
-          # --- 6. Відправка ---
+          # --- 7. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
