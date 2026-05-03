@@ -49,19 +49,19 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # --- 1. Очистка markdown (прибираємо badges/зображення) ---
+          # --- 1. Очистка markdown (бейджі/картинки) ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. Нормалізація переносів ---
+          # --- 2. Нормалізація переносів (забираємо "дірки") ---
           CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
-            | sed '/^\s*$/N;/^\n$/D')
+            | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # --- 3. Обрізка під Discord limit (safe ~3800) ---
+          # --- 3. Обрізка під Discord limit ---
           FORMATTED=$(echo "$CLEAN_DESCRIPTION" | head -c 3800)
 
-          # --- 4. Embed ---
+          # --- 4. Формуємо embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -79,7 +79,7 @@ jobs:
                   $version + "\n\n" +
                   $yt + "\n" +
                   $loc + "\n" +
-                  $dc + "\n\n" +
+                  $dc + "\n" +
                   $body
                 ),
                 color: $color,
