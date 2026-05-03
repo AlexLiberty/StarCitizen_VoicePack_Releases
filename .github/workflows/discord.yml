@@ -4,48 +4,81 @@ on:
   release:
     types: [published]
 
+  # для тестування без нового релізу
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (optional)'
+        required: false
+
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Prepare release data
+        id: release
+        env:
+          TAG: ${{ github.event.inputs.tag }}
+        run: |
+          if [ -n "$TAG" ]; then
+            echo "Using manual tag: $TAG"
+
+            RELEASE_JSON=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG)
+
+            echo "name=$(echo $RELEASE_JSON | jq -r '.name')" >> $GITHUB_OUTPUT
+            echo "body<<EOF" >> $GITHUB_OUTPUT
+            echo "$(echo $RELEASE_JSON | jq -r '.body')" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "url=$(echo $RELEASE_JSON | jq -r '.html_url')" >> $GITHUB_OUTPUT
+            echo "tag=$(echo $RELEASE_JSON | jq -r '.tag_name')" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ github.event.release.name }}" >> $GITHUB_OUTPUT
+            echo "body<<EOF" >> $GITHUB_OUTPUT
+            echo "${{ github.event.release.body }}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "url=${{ github.event.release.html_url }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Send Discord Notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.USFDISCORDHOOK }}
-          RELEASE_NAME: ${{ github.event.release.name }}
-          RELEASE_BODY: ${{ github.event.release.body }}
-          RELEASE_URL: ${{ github.event.release.html_url }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_NAME: ${{ steps.release.outputs.name }}
+          RELEASE_BODY: ${{ steps.release.outputs.body }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # 1. Чистимо markdown (видаляємо badges і картинки)
+          # 1. Чистимо markdown
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # 2. Виділяємо features (рядки з емодзі)
+          # 2. Витягуємо список можливостей
           FEATURES=$(echo "$CLEAN_DESCRIPTION" \
             | grep -E '^[[:space:]]*[✅❌⚠️ℹ️]' \
             | sed 's/^[[:space:]]*/• /')
 
-          # 3. Основний опис (без списків)
+          # 3. Основний опис
           DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
             | grep -vE '^[[:space:]]*[✅❌⚠️ℹ️]' \
             | sed '/^\s*$/d')
 
-          # 4. Обрізка під Discord limits
+          # 4. Discord limits
           DESCRIPTION=$(echo "$DESCRIPTION" | head -c 900)
           FEATURES=$(echo "$FEATURES" | head -c 900)
 
-          # fallback якщо пусто
           if [ -z "$FEATURES" ]; then
             FEATURES="—"
           fi
 
-          # 5. Формуємо embed
+          # 5. Формуємо embed (без url у title!)
           EMBED=$(jq -n \
+            --arg content "👉 Відкрити реліз: $RELEASE_URL" \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
-            --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
             --arg desc "$DESCRIPTION" \
             --arg features "$FEATURES" \
@@ -54,9 +87,9 @@ jobs:
             --arg dc "https://discord.gg/y2c7M9cgbk" \
             --argjson color 5814783 \
             '{
+              content: $content,
               embeds: [{
                 title: $title,
-                url: $url,
                 description: $version,
                 color: $color,
                 thumbnail: {
