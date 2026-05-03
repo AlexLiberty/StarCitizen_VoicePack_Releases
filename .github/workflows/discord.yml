@@ -74,8 +74,8 @@ jobs:
 
           # --- 5. Embed ---
           EMBED=$(jq -n \
-            --arg content "👉 Відкрити реліз: $RELEASE_URL" \
-            --arg title "🚀 $RELEASE_NAME" \
+            --arg title "🚀 Новий реліз: $RELEASE_NAME" \
+            --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
             --arg desc "$DESCRIPTION" \
             --arg features "$FEATURES" \
@@ -84,9 +84,9 @@ jobs:
             --arg dc "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)" \
             --argjson color 5814783 \
             '{
-              content: $content,
               embeds: [{
                 title: $title,
+                url: $url,
                 description: $version,
                 color: $color,
                 thumbnail: {
