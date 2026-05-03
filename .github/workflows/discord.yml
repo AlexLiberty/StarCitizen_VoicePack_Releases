@@ -4,7 +4,6 @@ on:
   release:
     types: [published]
 
-  # для тестування без нового релізу
   workflow_dispatch:
     inputs:
       tag:
@@ -22,8 +21,6 @@ jobs:
           TAG: ${{ github.event.inputs.tag }}
         run: |
           if [ -n "$TAG" ]; then
-            echo "Using manual tag: $TAG"
-
             RELEASE_JSON=$(curl -s \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG)
@@ -52,22 +49,22 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # 1. Чистимо markdown
+          # --- 1. Очистка markdown ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # 2. Витягуємо список можливостей
+          # --- 2. Витяг features ---
           FEATURES=$(echo "$CLEAN_DESCRIPTION" \
             | grep -E '^[[:space:]]*[✅❌⚠️ℹ️]' \
             | sed 's/^[[:space:]]*/• /')
 
-          # 3. Основний опис
+          # --- 3. Основний опис ---
           DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
             | grep -vE '^[[:space:]]*[✅❌⚠️ℹ️]' \
             | sed '/^\s*$/d')
 
-          # 4. Discord limits
+          # --- 4. Discord limits ---
           DESCRIPTION=$(echo "$DESCRIPTION" | head -c 900)
           FEATURES=$(echo "$FEATURES" | head -c 900)
 
@@ -75,16 +72,16 @@ jobs:
             FEATURES="—"
           fi
 
-          # 5. Формуємо embed (без url у title!)
+          # --- 5. Embed ---
           EMBED=$(jq -n \
             --arg content "👉 Відкрити реліз: $RELEASE_URL" \
-            --arg title "🚀 Новий реліз: $RELEASE_NAME" \
+            --arg title "🚀 $RELEASE_NAME" \
             --arg version "Версія: $RELEASE_TAG" \
             --arg desc "$DESCRIPTION" \
             --arg features "$FEATURES" \
-            --arg yt "https://youtu.be/4AwL8TKXcTU" \
-            --arg loc "https://scloc.pp.ua/" \
-            --arg dc "https://discord.gg/y2c7M9cgbk" \
+            --arg yt "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)" \
+            --arg loc "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)" \
+            --arg dc "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)" \
             --argjson color 5814783 \
             '{
               content: $content,
@@ -96,36 +93,16 @@ jobs:
                   url: "https://img.youtube.com/vi/4AwL8TKXcTU/hqdefault.jpg"
                 },
                 fields: [
-                  {
-                    name: "▶️ Демонстраційне відео",
-                    value: $yt,
-                    inline: false
-                  },
-                  {
-                    name: "🇺🇦 Україїнізатор для Star Citizen",
-                    value: $loc,
-                    inline: false
-                  },
-                  {
-                    name: "💬 Україномовна спільнота",
-                    value: $dc,
-                    inline: false
-                  },
-                  {
-                    name: "📖 Опис",
-                    value: $desc,
-                    inline: false
-                  },
-                  {
-                    name: "⚙️ Можливості",
-                    value: $features,
-                    inline: false
-                  }
+                  { "name": " ", "value": $yt },
+                  { "name": " ", "value": $loc },
+                  { "name": " ", "value": $dc },
+                  { "name": "📖 Опис", "value": $desc },
+                  { "name": "⚙️ Можливості", "value": $features }
                 ]
               }]
             }')
 
-          # 6. Відправка
+          # --- 6. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
