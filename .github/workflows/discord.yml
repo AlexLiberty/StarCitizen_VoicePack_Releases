@@ -54,7 +54,7 @@ jobs:
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. Вставка лінків (акуратно через awk) ---
+          # --- 2. Вставка лінків через awk (без зайвих переносів) ---
           CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" | awk '
           {
             print
@@ -63,7 +63,6 @@ jobs:
               print "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)"
               print "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)"
               print "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)"
-              print ""
             }
           }')
 
@@ -71,14 +70,18 @@ jobs:
           CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # --- 4. Прибираємо пусті рядки на початку/кінці ---
+          # --- 4. Прибираємо зайві пусті рядки після лінків ---
+          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
+            | sed -E 's/(спільноти\))\n{2,}/\1\n/g')
+
+          # --- 5. Trim початку/кінця ---
           FORMATTED=$(echo "$CLEAN_DESCRIPTION" \
             | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
 
-          # --- 5. Обрізка ---
+          # --- 6. Обрізка під Discord ---
           FORMATTED=$(echo "$FORMATTED" | head -c 3800)
 
-          # --- 6. Embed (без картинки) ---
+          # --- 7. Embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -94,7 +97,7 @@ jobs:
               }]
             }')
 
-          # --- 7. Відправка ---
+          # --- 8. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
