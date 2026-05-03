@@ -66,18 +66,6 @@ jobs:
             }
           }')
 
-          # --- 3. Нормалізація переносів ---
-          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
-            | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
-
-          # --- 4. Прибираємо зайві пусті рядки після лінків ---
-          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
-            | sed -E 's/(спільноти\))\n{2,}/\1\n/g')
-
-          # --- 5. Trim початку/кінця ---
-          FORMATTED=$(echo "$CLEAN_DESCRIPTION" \
-            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
-
           # --- 6. Обрізка під Discord ---
           FORMATTED=$(echo "$FORMATTED" | head -c 3800)
 
