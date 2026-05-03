@@ -49,36 +49,24 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # --- 1. Очистка markdown ---
+          # --- 1. Очистка markdown (прибираємо badges/зображення) ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. Витяг features ---
-          FEATURES=$(echo "$CLEAN_DESCRIPTION" \
-            | grep -E '^[[:space:]]*[✅❌⚠️ℹ️]' \
-            | sed 's/^[[:space:]]*/• /')
+          # --- 2. Нормалізація переносів ---
+          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
+            | sed '/^\s*$/N;/^\n$/D')
 
-          # --- 3. Основний опис ---
-          DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
-            | grep -vE '^[[:space:]]*[✅❌⚠️ℹ️]' \
-            | sed '/^\s*$/d')
+          # --- 3. Обрізка під Discord limit (safe ~3800) ---
+          FORMATTED=$(echo "$CLEAN_DESCRIPTION" | head -c 3800)
 
-          # --- 4. Discord limits ---
-          DESCRIPTION=$(echo "$DESCRIPTION" | head -c 900)
-          FEATURES=$(echo "$FEATURES" | head -c 900)
-
-          if [ -z "$FEATURES" ]; then
-            FEATURES="—"
-          fi
-
-          # --- 5. Embed ---
+          # --- 4. Embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
-            --arg desc "$DESCRIPTION" \
-            --arg features "$FEATURES" \
+            --arg body "$FORMATTED" \
             --arg yt "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)" \
             --arg loc "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)" \
             --arg dc "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)" \
@@ -87,22 +75,21 @@ jobs:
               embeds: [{
                 title: $title,
                 url: $url,
-                description: $version,
+                description: (
+                  $version + "\n\n" +
+                  $yt + "\n" +
+                  $loc + "\n" +
+                  $dc + "\n\n" +
+                  $body
+                ),
                 color: $color,
                 thumbnail: {
                   url: "https://img.youtube.com/vi/4AwL8TKXcTU/hqdefault.jpg"
-                },
-                fields: [
-                  { "name": " ", "value": $yt },
-                  { "name": " ", "value": $loc },
-                  { "name": " ", "value": $dc },
-                  { "name": "📖 Опис", "value": $desc },
-                  { "name": "⚙️ Можливості", "value": $features }
-                ]
+                }
               }]
             }')
 
-          # --- 6. Відправка ---
+          # --- 5. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
