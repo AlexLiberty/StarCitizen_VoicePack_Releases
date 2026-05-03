@@ -49,30 +49,32 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # очистка markdown
+          # --- 1. Очистка markdown (видаляємо badges/зображення) ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # нормалізація переносів
+          # --- 2. Вставка лінків на місце (після "Насолоджуйтесь...") ---
+          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" | sed '/Насолоджуйтесь/ a\
+          \[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)\
+          \[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)\
+          \[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)\')
+
+          # --- 3. Нормалізація переносів ---
           CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # обрізка
+          # --- 4. Прибираємо пусті рядки в кінці + обрізка ---
           FORMATTED=$(echo "$CLEAN_DESCRIPTION" \
             | sed -E ':a;/^\n*$/{$d;N;ba}' \
-            | head -c 3500)
+            | head -c 3800)
 
-          # стабільні лінки
-          LINKS=$(printf "\n\n[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)\n\n[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)\n\n[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)")
-
-          FINAL_BODY="$FORMATTED$LINKS"
-
+          # --- 5. Embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
-            --arg body "$FINAL_BODY" \
+            --arg body "$FORMATTED" \
             --argjson color 5814783 \
             '{
               embeds: [{
@@ -86,6 +88,7 @@ jobs:
               }]
             }')
 
+          # --- 6. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
