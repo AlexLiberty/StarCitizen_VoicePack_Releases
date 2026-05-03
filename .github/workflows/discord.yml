@@ -49,27 +49,29 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
 
         run: |
-          # --- 1. Очистка markdown ---
+          # --- 1. Очистка markdown (прибираємо картинки/badges) ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. Вставка лінків через awk (без зайвих переносів) ---
-          CLEAN_DESCRIPTION=$(echo "$CLEAN_DESCRIPTION" | awk '
-          {
-            print
-            if ($0 ~ /Насолоджуйтесь/) {
-              print ""
-              print "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)"
-              print "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)"
-              print "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)"
-            }
-          }')
+          # --- 2. ФІЛЬТР (залишаємо тільки потрібне) ---
+          FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
+            /ℹ️/ { print; next }
+            /http/ { print; next }
+          ')
 
-          # --- 6. Обрізка під Discord ---
-          FORMATTED=$(echo "$FORMATTED" | head -c 3800)
+          # --- 3. Нормалізація переносів ---
+          FILTERED=$(echo "$FILTERED" \
+            | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # --- 7. Embed ---
+          # --- 4. Trim (початок/кінець) ---
+          FORMATTED=$(echo "$FILTERED" \
+            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
+
+          # --- 5. Обрізка під Discord ---
+          FORMATTED=$(echo "$FORMATTED" | head -c 2000)
+
+          # --- 6. Формуємо embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -85,7 +87,7 @@ jobs:
               }]
             }')
 
-          # --- 8. Відправка ---
+          # --- 7. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
