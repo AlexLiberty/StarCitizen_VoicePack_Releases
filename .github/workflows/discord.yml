@@ -18,43 +18,45 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
 
         run: |
-          # --- 1. Очистка markdown (бейджі/картинки) ---
+          # --- 1. ВИТЯГУЄМО ЛІНКИ З BADGE ---
+          EXTRACTED_LINKS=$(echo "$RELEASE_BODY" \
+            | grep -oP '\]\(\Khttps://[^)]+' )
+
+          # --- 2. ОЧИСТКА markdown ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # --- 2. Фільтр важливого ---
+          # --- 3. ФІЛЬТР ---
           FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
+            /⚠️/ { print; next }
+            /ℹ️/ { print; next }
             /Програма не втручається/ { print; next }
             /повернуто озвучання/ { print; next }
-            /реферальним посиланням/ { print; next }
-            /http/ { print; next }
           ')
 
-          # --- 3. fallback якщо пусто ---
+          # fallback
           if [ -z "$FILTERED" ]; then
-            FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 15)
+            FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 10)
           fi
 
-          # --- 4. Додаємо лінки (ЗАВЖДИ) ---
-          FILTERED=$(printf "%s\n\n%s\n%s\n%s" \
-            "$FILTERED" \
-            "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)" \
-            "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)" \
-            "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)")
+          # --- 4. ДОДАЄМО ЛІНКИ ---
+          FILTERED=$(printf "%s\n\n%s" "$FILTERED" "$EXTRACTED_LINKS")
 
-          # --- 5. Нормалізація переносів ---
+          # --- 5. ДОДАЄМО ФІНАЛЬНИЙ РЯДОК ---
+          FILTERED=$(printf "%s\n\n%s" \
+            "$FILTERED" \
+            "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
+
+          # --- 6. НОРМАЛІЗАЦІЯ ---
           FILTERED=$(echo "$FILTERED" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          # --- 6. Trim ---
           FORMATTED=$(echo "$FILTERED" \
-            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
+            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}' \
+            | head -c 2000)
 
-          # --- 7. Обрізка під Discord ---
-          FORMATTED=$(echo "$FORMATTED" | head -c 2000)
-
-          # --- 8. Формуємо embed ---
+          # --- 7. EMBED ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -70,7 +72,7 @@ jobs:
               }]
             }')
 
-          # --- 9. Відправка ---
+          # --- 8. SEND ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
