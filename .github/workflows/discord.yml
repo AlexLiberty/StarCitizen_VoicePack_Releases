@@ -12,7 +12,7 @@ jobs:
       - name: Send Discord Notification
         env:
           DISCORD_WEBHOOK_1: ${{ secrets.USFDISCORDHOOK }}
-          DISCORD_WEBHOOK_2: ${{ secrets.USFDISCORDHOOK2 }}
+          DISCORD_WEBHOOK_2: ${{ secrets.TIHIY_DED }}
           # додай ще при потребі:
           # DISCORD_WEBHOOK_3: ${{ secrets.USFDISCORDHOOK3 }}
 
