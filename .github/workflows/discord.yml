@@ -18,10 +18,12 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
 
         run: |
+          # --- 1. Очистка markdown (бейджі/картинки) ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
 
+          # --- 2. Фільтр важливого ---
           FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
             /Програма не втручається/ { print; next }
             /повернуто озвучання/ { print; next }
@@ -29,30 +31,30 @@ jobs:
             /http/ { print; next }
           ')
 
-          # fallback
+          # --- 3. fallback якщо пусто ---
           if [ -z "$FILTERED" ]; then
             FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 15)
           fi
 
-          # --- ВСТАВКА ЛІНКІВ ---
-          FILTERED=$(echo "$FILTERED" | awk '
-          {
-            print
-            if ($0 ~ /referral=/) {
-              print ""
-              print "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)"
-              print "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)"
-              print "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)"
-            }
-          }')
+          # --- 4. Додаємо лінки (ЗАВЖДИ) ---
+          FILTERED=$(printf "%s\n\n%s\n%s\n%s" \
+            "$FILTERED" \
+            "[▶️ Демонстраційне відео](https://youtu.be/4AwL8TKXcTU)" \
+            "[🇺🇦 Україїнізатор для Star Citizen](https://scloc.pp.ua/)" \
+            "[💬 Приєднатись до найбільшої україномовної спільноти](https://discord.gg/y2c7M9cgbk)")
 
+          # --- 5. Нормалізація переносів ---
           FILTERED=$(echo "$FILTERED" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
+          # --- 6. Trim ---
           FORMATTED=$(echo "$FILTERED" \
-            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}' \
-            | head -c 2000)
+            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}')
 
+          # --- 7. Обрізка під Discord ---
+          FORMATTED=$(echo "$FORMATTED" | head -c 2000)
+
+          # --- 8. Формуємо embed ---
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg url "$RELEASE_URL" \
@@ -68,6 +70,7 @@ jobs:
               }]
             }')
 
+          # --- 9. Відправка ---
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "$EMBED" \
