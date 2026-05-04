@@ -11,7 +11,11 @@ jobs:
     steps:
       - name: Send Discord Notification
         env:
-          DISCORD_WEBHOOK: ${{ secrets.USFDISCORDHOOK }}
+          DISCORD_WEBHOOK_1: ${{ secrets.USFDISCORDHOOK }}
+          DISCORD_WEBHOOK_2: ${{ secrets.USFDISCORDHOOK2 }}
+          # додай ще при потребі:
+          # DISCORD_WEBHOOK_3: ${{ secrets.USFDISCORDHOOK3 }}
+
           RELEASE_NAME: ${{ github.event.release.name }}
           RELEASE_BODY: ${{ github.event.release.body }}
           RELEASE_URL: ${{ github.event.release.html_url }}
@@ -24,7 +28,7 @@ jobs:
           DC="https://discord.gg/y2c7M9cgbk"
           REF="https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ"
 
-          # --- 2. ЧИСТКА ---
+          # --- 2. ЧИСТКА markdown ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
@@ -32,15 +36,15 @@ jobs:
           # --- 3. ФІЛЬТР ---
           FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
             /⚠️/ { print; next }
-            
             /ℹ️/ { print; next }
           ')
 
+          # fallback
           if [ -z "$FILTERED" ]; then
             FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 10)
           fi
 
-          # --- 4. UI ЛІНКИ ---
+          # --- 4. КЛІКАБЕЛЬНІ ЛІНКИ ---
           LINKS="
           ▶️ [Демонстраційне відео]($YT)
           
@@ -57,7 +61,7 @@ jobs:
             "$FILTERED" \
             "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
 
-          # --- 6. CLEAN ---
+          # --- 6. НОРМАЛІЗАЦІЯ ---
           FILTERED=$(echo "$FILTERED" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
@@ -81,8 +85,18 @@ jobs:
               }]
             }')
 
-          # --- 8. SEND ---
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d "$EMBED" \
-            "$DISCORD_WEBHOOK"
+          # --- 8. ВІДПРАВКА У КІЛЬКА DISCORD ---
+          WEBHOOKS=(
+            "$DISCORD_WEBHOOK_1"
+            "$DISCORD_WEBHOOK_2"
+          )
+
+          for WEBHOOK in "${WEBHOOKS[@]}"; do
+            if [ -n "$WEBHOOK" ]; then
+              curl -s -o /dev/null -w "%{http_code}" \
+                -X POST \
+                -H "Content-Type: application/json" \
+                -d "$EMBED" \
+                "$WEBHOOK"
+            fi
+          done
