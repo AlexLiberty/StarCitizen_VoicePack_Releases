@@ -18,13 +18,15 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
 
         run: |
-          # --- 1. ВИТЯГУЄМО ТІЛЬКИ ПОТРІБНІ ЛІНКИ ---
-          YT=$(echo "$RELEASE_BODY" | grep -oE 'https://youtu\.be/[^\) ]+' | head -n1)
-          LOC=$(echo "$RELEASE_BODY" | grep -oE 'https://scloc\.pp\.ua[^ )]*' | head -n1)
-          DC=$(echo "$RELEASE_BODY" | grep -oE 'https://discord\.gg/[^\) ]+' | head -n1)
-          REF=$(echo "$RELEASE_BODY" | grep -oE 'https://www\.robertsspaceindustries\.com/[^\) ]+' | head -n1)
+          # --- 1. ВИТЯГУЄМО ЧИСТІ URL ---
+          URLS=$(echo "$RELEASE_BODY" | grep -oP '\[[^]]*\]\(\K[^)]+' )
 
-          # --- 2. ОЧИСТКА markdown ---
+          YT=$(echo "$URLS" | grep 'youtu\.be' | head -n1)
+          LOC=$(echo "$URLS" | grep 'scloc\.pp\.ua' | head -n1)
+          DC=$(echo "$URLS" | grep 'discord\.gg' | head -n1)
+          REF=$(echo "$URLS" | grep 'robertsspaceindustries\.com' | head -n1)
+
+          # --- 2. ЧИСТИМО ТЕКСТ ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
@@ -33,8 +35,6 @@ jobs:
           FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
             /⚠️/ { print; next }
             /ℹ️/ { print; next }
-            /Програма не втручається/ { print; next }
-            /повернуто озвучання/ { print; next }
           ')
 
           # fallback
@@ -42,28 +42,28 @@ jobs:
             FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 10)
           fi
 
-          # --- 4. ДОДАЄМО CTA ЛІНКИ (КРАСИВО) ---
+          # --- 4. ФОРМУЄМО ЛІНКИ ---
           LINKS=""
 
           if [ -n "$YT" ]; then
-            LINKS="$LINKS\n▶️ Демонстраційне відео\n$YT\n"
+            LINKS="$LINKS\n▶️ Демонстраційне відео\n$YT"
           fi
 
           if [ -n "$LOC" ]; then
-            LINKS="$LINKS\n🇺🇦 Україїнізатор для Star Citizen\n$LOC\n"
+            LINKS="$LINKS\n\n🇺🇦 Україїнізатор для Star Citizen\n$LOC"
           fi
 
           if [ -n "$DC" ]; then
-            LINKS="$LINKS\n💬 Україномовна спільнота\n$DC\n"
+            LINKS="$LINKS\n\n💬 Україномовна спільнота\n$DC"
           fi
 
           if [ -n "$REF" ]; then
-            LINKS="$LINKS\n🤝 Підтримка та бонус\n$REF\n"
+            LINKS="$LINKS\n\n🤝 Підтримка та бонус\n$REF"
           fi
 
           FILTERED=$(printf "%s\n\n%s" "$FILTERED" "$LINKS")
 
-          # --- 5. ФІНАЛЬНИЙ РЯДОК ---
+          # --- 5. ФУТЕР ---
           FILTERED=$(printf "%s\n\n%s" \
             "$FILTERED" \
             "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
