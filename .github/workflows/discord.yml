@@ -18,15 +18,13 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
 
         run: |
-          # --- 1. ВИТЯГУЄМО ЧИСТІ URL ---
-          URLS=$(echo "$RELEASE_BODY" | grep -oP '\[[^]]*\]\(\K[^)]+' )
+          # --- 1. ФІКСОВАНІ ЛІНКИ ---
+          YT="https://youtu.be/4AwL8TKXcTU"
+          LOC="https://scloc.pp.ua/"
+          DC="https://discord.gg/y2c7M9cgbk"
+          REF="https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ"
 
-          YT=$(echo "$URLS" | grep 'youtu\.be' | head -n1)
-          LOC=$(echo "$URLS" | grep 'scloc\.pp\.ua' | head -n1)
-          DC=$(echo "$URLS" | grep 'discord\.gg' | head -n1)
-          REF=$(echo "$URLS" | grep 'robertsspaceindustries\.com' | head -n1)
-
-          # --- 2. ЧИСТИМО ТЕКСТ ---
+          # --- 2. ЧИСТКА ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
             | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
             | sed -E 's/!\[.*?\]\(.*?\)//g')
@@ -37,29 +35,20 @@ jobs:
             /ℹ️/ { print; next }
           ')
 
-          # fallback
           if [ -z "$FILTERED" ]; then
             FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 10)
           fi
 
-          # --- 4. ФОРМУЄМО ЛІНКИ ---
-          LINKS=""
-
-          if [ -n "$YT" ]; then
-            LINKS="$LINKS\n▶️ Демонстраційне відео\n$YT"
-          fi
-
-          if [ -n "$LOC" ]; then
-            LINKS="$LINKS\n\n🇺🇦 Україїнізатор для Star Citizen\n$LOC"
-          fi
-
-          if [ -n "$DC" ]; then
-            LINKS="$LINKS\n\n💬 Україномовна спільнота\n$DC"
-          fi
-
-          if [ -n "$REF" ]; then
-            LINKS="$LINKS\n\n🤝 Підтримка та бонус\n$REF"
-          fi
+          # --- 4. UI ЛІНКИ ---
+          LINKS="
+          ▶️ Демонстраційне відео
+          $YT
+          🇺🇦 Україїнізатор для Star Citizen
+          $LOC
+          💬 Україномовна спільнота
+          $DC
+          🤝 Підтримка та бонус
+          $REF"
 
           FILTERED=$(printf "%s\n\n%s" "$FILTERED" "$LINKS")
 
@@ -68,7 +57,7 @@ jobs:
             "$FILTERED" \
             "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
 
-          # --- 6. НОРМАЛІЗАЦІЯ ---
+          # --- 6. CLEAN ---
           FILTERED=$(echo "$FILTERED" \
             | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
