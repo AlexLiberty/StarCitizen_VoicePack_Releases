@@ -18,9 +18,11 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
 
         run: |
-          # --- 1. ВИТЯГУЄМО ЛІНКИ З BADGE ---
-          EXTRACTED_LINKS=$(echo "$RELEASE_BODY" \
-            | grep -oP '\]\(\Khttps://[^)]+' )
+          # --- 1. ВИТЯГУЄМО ТІЛЬКИ ПОТРІБНІ ЛІНКИ ---
+          YT=$(echo "$RELEASE_BODY" | grep -oE 'https://youtu\.be/[^\) ]+' | head -n1)
+          LOC=$(echo "$RELEASE_BODY" | grep -oE 'https://scloc\.pp\.ua[^ )]*' | head -n1)
+          DC=$(echo "$RELEASE_BODY" | grep -oE 'https://discord\.gg/[^\) ]+' | head -n1)
+          REF=$(echo "$RELEASE_BODY" | grep -oE 'https://www\.robertsspaceindustries\.com/[^\) ]+' | head -n1)
 
           # --- 2. ОЧИСТКА markdown ---
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
@@ -40,10 +42,28 @@ jobs:
             FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 10)
           fi
 
-          # --- 4. ДОДАЄМО ЛІНКИ ---
-          FILTERED=$(printf "%s\n\n%s" "$FILTERED" "$EXTRACTED_LINKS")
+          # --- 4. ДОДАЄМО CTA ЛІНКИ (КРАСИВО) ---
+          LINKS=""
 
-          # --- 5. ДОДАЄМО ФІНАЛЬНИЙ РЯДОК ---
+          if [ -n "$YT" ]; then
+            LINKS="$LINKS\n▶️ Демонстраційне відео\n$YT\n"
+          fi
+
+          if [ -n "$LOC" ]; then
+            LINKS="$LINKS\n🇺🇦 Україїнізатор для Star Citizen\n$LOC\n"
+          fi
+
+          if [ -n "$DC" ]; then
+            LINKS="$LINKS\n💬 Україномовна спільнота\n$DC\n"
+          fi
+
+          if [ -n "$REF" ]; then
+            LINKS="$LINKS\n🤝 Підтримка та бонус\n$REF\n"
+          fi
+
+          FILTERED=$(printf "%s\n\n%s" "$FILTERED" "$LINKS")
+
+          # --- 5. ФІНАЛЬНИЙ РЯДОК ---
           FILTERED=$(printf "%s\n\n%s" \
             "$FILTERED" \
             "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
