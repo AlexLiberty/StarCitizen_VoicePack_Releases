@@ -13,6 +13,8 @@ jobs:
         env:
           DISCORD_WEBHOOK_1: ${{ secrets.USFDISCORDHOOK }}
           DISCORD_WEBHOOK_2: ${{ secrets.TIHIY_DED }}
+          # додай ще при потребі:
+          # DISCORD_WEBHOOK_3: ${{ secrets.USFDISCORDHOOK3 }}
 
           RELEASE_NAME: ${{ github.event.release.name }}
           RELEASE_BODY: ${{ github.event.release.body }}
@@ -20,89 +22,75 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
 
         run: |
-
+          # --- 1. ФІКСОВАНІ ЛІНКИ ---
           YT="https://youtu.be/4AwL8TKXcTU"
           LOC="https://scloc.pp.ua/"
           DC="https://discord.gg/y2c7M9cgbk"
           REF="https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ"
 
-          echo "Cleaning markdown..."
+          # --- 2. ЧИСТКА markdown ---
+          CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" \
+            | sed -E 's/\[!\[.*?\]\(.*?\)\]\(.*?\)//g' \
+            | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          CLEAN=$(echo "$RELEASE_BODY" |
+          # --- 3. ФІЛЬТР ---
+          FILTERED=$(echo "$CLEAN_DESCRIPTION" | awk '
+            /ℹ️/ { inblock=1; print; next }
 
-          # прибрати картинки
-          sed -E 's/!\[[^]]*\]\([^)]*\)//g' |
+            # якщо почався інший розділ — зупиняємось
+            /^#/ && inblock { exit }
+            /🚀/ && inblock { exit }
 
-          # прибрати бейджі
-          sed -E 's/\[!\[[^]]*\]\([^)]*\)\]\([^)]*\)//g' |
+            inblock { print }
+          ')
 
-          # прибрати #
-          sed -E 's/^#+[[:space:]]*//g' |
+          # fallback
+          if [ -z "$FILTERED" ]; then
+            FILTERED=$(echo "$CLEAN_DESCRIPTION" | tail -n 10)
+          fi
 
-          # прибрати ` код `
-          sed 's/`//g')
-
-          echo "Extract release section..."
-
-          FEATURES=$(echo "$CLEAN" | awk '
-          /ℹ️ У поточній збірці/ {flag=1; next}
-          /Насолоджуйтесь грою/ {flag=0}
-          flag')
-
-          echo "Extract install section..."
-
-          INSTALL=$(echo "$CLEAN" | awk '
-          /🚀 Інсталяція та перший запуск/ {flag=1}
-          flag')
-
-          CONTENT=$(printf "%s\n\n🚀 Інсталяція:\n\n%s" \
-          "$FEATURES" \
-          "$INSTALL")
-
+          # --- 4. КЛІКАБЕЛЬНІ ЛІНКИ ---
           LINKS="
+          ▶️ [Демонстраційне відео]($YT)
+          
+          🇺🇦 [Українізатор тексту для Star Citizen]($LOC)
+          
+          💬 [Приєднуйтесь до найбільшої україномовної спільноти]($DC)
+          
+          🤝 [Реєструйтесь за реферальним посиланням та отримуйте додатковий бонус]($REF)"
 
-          ▶️ Демонстраційне відео
-          $YT
+          FILTERED=$(printf "%s\n\n%s" "$FILTERED" "$LINKS")
 
-          🇺🇦 Український локалізатор Star Citizen
-          $LOC
+          # --- 5. ФУТЕР ---
+          FILTERED=$(printf "%s\n\n%s" \
+            "$FILTERED" \
+            "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
 
-          💬 Україномовна спільнота
-          $DC
+          # --- 6. НОРМАЛІЗАЦІЯ ---
+          FILTERED=$(echo "$FILTERED" \
+            | sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g')
 
-          🎁 Реферальний бонус
-          $REF
-          "
+          FORMATTED=$(echo "$FILTERED" \
+            | sed -E '1{/^$/d}; :a;/^\n*$/{$d;N;ba}' \
+            | head -c 2000)
 
-          CONTENT=$(printf "%s\n\n%s" \
-          "$CONTENT" \
-          "$LINKS")
-
-          CONTENT=$(printf "%s\n\n%s" \
-          "$CONTENT" \
-          "Зоряних пригод, Капітане! Зустрінемось серед зірок ✨")
-
-          # прибрати зайві порожні рядки
-          FORMATTED=$(echo "$CONTENT" |
-          sed -E ':a;N;$!ba;s/\n{3,}/\n\n/g' |
-          head -c 3800)
-
+          # --- 7. EMBED ---
           EMBED=$(jq -n \
-          --arg title "🚀 Новий реліз: $RELEASE_NAME" \
-          --arg url "$RELEASE_URL" \
-          --arg version "Версія: $RELEASE_TAG" \
-          --arg body "$FORMATTED" \
-          --argjson color 5814783 \
-          '{
-            embeds: [{
-              title: $title,
-              url: $url,
-              description:
-              ($version + "\n\n" + $body),
-              color: $color
-            }]
-          }')
+            --arg title "🚀 Новий реліз: $RELEASE_NAME" \
+            --arg url "$RELEASE_URL" \
+            --arg version "Версія: $RELEASE_TAG" \
+            --arg body "$FORMATTED" \
+            --argjson color 5814783 \
+            '{
+              embeds: [{
+                title: $title,
+                url: $url,
+                description: ($version + "\n\n" + $body),
+                color: $color
+              }]
+            }')
 
+          # --- 8. ВІДПРАВКА У КІЛЬКА DISCORD ---
           WEBHOOKS=(
             "$DISCORD_WEBHOOK_1"
             "$DISCORD_WEBHOOK_2"
@@ -110,14 +98,10 @@ jobs:
 
           for WEBHOOK in "${WEBHOOKS[@]}"; do
             if [ -n "$WEBHOOK" ]; then
-
-              echo "Sending..."
-
-              curl \
-              -H "Content-Type: application/json" \
-              -X POST \
-              -d "$EMBED" \
-              "$WEBHOOK"
-
+              curl -s -o /dev/null -w "%{http_code}" \
+                -X POST \
+                -H "Content-Type: application/json" \
+                -d "$EMBED" \
+                "$WEBHOOK"
             fi
           done
