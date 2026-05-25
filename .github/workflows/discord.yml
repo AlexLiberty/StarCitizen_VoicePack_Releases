@@ -24,7 +24,7 @@ jobs:
         run: |
           # --- 1. ФІКСОВАНІ ЛІНКИ ---
           YT="https://youtu.be/4AwL8TKXcTU"
-          LOC="https://scloc.pp.ua/"
+          LOC="https://github.com/Vova-Bob/SC_localization_UA/releases"
           DC="https://discord.gg/y2c7M9cgbk"
           REF="https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ"
 
