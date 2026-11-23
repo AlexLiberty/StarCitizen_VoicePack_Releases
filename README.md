@@ -57,7 +57,7 @@
 #
 English Version
 #
-Welcome to L.I.A — a desktop voice assistant that brings Ukrainian-language voice support and voice-controlled gameplay to Star Citizen.
+Welcome to L.I.A — your personal desktop voice assistant for Star Citizen, providing English-language voice support and intuitive voice control in the game.
 
 🎙️ L.I.A is your personal voice assistant in the Star Citizen universe. She responds to your voice commands, helps you control your spacecraft and vehicles, assists you both in flight and FPS mode, and brings an entirely new level of immersion to your gaming experience.
 
@@ -109,7 +109,7 @@ Fly safe, Captain! See you among the stars ✨
 Deutsche Version
 #
 
-Willkommen bei L.I.A — einem Desktop-Sprachassistenten, der Star Citizen um ukrainische Sprachunterstützung und sprachgesteuerte Funktionen erweitert.
+Willkommen bei L.I.A — deinem persönlichen Desktop-Sprachassistenten für Star Citizen, der dir deutschsprachige Sprachunterstützung und eine intuitive Sprachsteuerung im Spiel bietet.
 
 🎙️ L.I.A ist deine persönliche Sprachassistentin im Star-Citizen-Universum. Sie reagiert auf deine Sprachbefehle, unterstützt dich bei der Steuerung deines Raumschiffs und deiner Fahrzeuge, hilft dir sowohl im Flug als auch im FPS-Modus und sorgt für ein völlig neues Spielerlebnis mit ukrainischer Sprachausgabe.
 
