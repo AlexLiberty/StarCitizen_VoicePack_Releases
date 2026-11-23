@@ -55,7 +55,7 @@
 Зоряних пригод, Капітане! Зустрінемось серед зірок ✨
 
 #
-English Version
+**English Version**
 #
 Welcome to L.I.A — your personal desktop voice assistant for Star Citizen, providing English-language voice support and intuitive voice control in the game.
 
@@ -106,7 +106,7 @@ Enjoy Star Citizen with Ukrainian voice support and a whole new level of immersi
 Fly safe, Captain! See you among the stars ✨
 
 #
-Deutsche Version
+**Deutsche Version**
 #
 
 Willkommen bei L.I.A — deinem persönlichen Desktop-Sprachassistenten für Star Citizen, der dir deutschsprachige Sprachunterstützung und eine intuitive Sprachsteuerung im Spiel bietet.
