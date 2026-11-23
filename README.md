@@ -151,8 +151,8 @@ Weitere Informationen
 
 ⚠️ Seit Version 1.1.0.0 ist L.I.A eine vollständig eigenständige Anwendung und benötigt keine zusätzliche Software von Drittanbietern, einschließlich VoiceAttack.
 
-Erlebe Star Citizen mit ukrainischer Sprachausgabe und einer völlig neuen Atmosphäre!
-
 [![▶️ YouTube](https://img.shields.io/badge/_Demovideo_ansehen-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
+
+Erlebe Star Citizen mit ukrainischer Sprachausgabe und einer völlig neuen Atmosphäre!
 
 Allzeit guten Flug, Captain! Wir sehen uns zwischen den Sternen ✨
