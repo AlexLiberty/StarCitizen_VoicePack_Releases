@@ -89,10 +89,6 @@ What can L.I.A do?
 
 ✅ Hear synchronized voice announcements when traveling between star systems.
 
-✅ Fully voiced Vikello dialogues (available in Ukrainian and German).
-
-⚙️ Mission voice-over — currently in development (for the Ukrainian and German versions).
-
 Additional Information
 
 ⚠️ L.I.A does not modify game files or interfere with the game process and does not violate CIG's security policies.
