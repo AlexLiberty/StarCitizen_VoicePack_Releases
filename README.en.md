@@ -76,8 +76,7 @@ L.I.A adapts available commands to the current in-game situation and announces s
 🚫 Hyperjump voice announcements and synchronization are not supported in the current version.
 
 🚧 English and German voices are still being refined.
-
-
+#
 [![▶️ YouTube](https://img.shields.io/badge/_Demo_Video-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
 
 [![🎁 Sign up using my referral link and receive an additional bonus](https://img.shields.io/badge/🎁_Sign_up_using_my_referral_link_and_receive_an_additional_bonus-ff9800?style=flat)](https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ)
