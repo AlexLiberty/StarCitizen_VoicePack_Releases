@@ -76,3 +76,7 @@ L.I.A passt die verfügbaren Befehle an die aktuelle Spielsituation an und melde
 🚫 Sprachansagen und Synchronisierung von Hyperjumps werden in der aktuellen Version nicht unterstützt.
 
 🚧 Die englischen und deutschen Stimmen werden noch überarbeitet.
+
+[![▶️ YouTube](https://img.shields.io/badge/_Demovideo-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
+
+[![🎁 Registriere dich über meinen Empfehlungslink und erhalte einen zusätzlichen Bonus](https://img.shields.io/badge/🎁_Registriere_dich_über_meinen_Empfehlungslink_und_erhalte_einen_zusätzlichen_Bonus-ff9800?style=flat)](https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ)
