@@ -1,46 +1,78 @@
-![](https://raw.githubusercontent.com/AlexLiberty/StarCitizen_VoicePack_Updater_Releases/refs/heads/main/assets/IMG_7075.jpeg)
+![L.I.A](https://raw.githubusercontent.com/AlexLiberty/StarCitizen_VoicePack_Releases/main/assets/IMG_7076.png)
 
-Вас вітає голосовий асистент L.I.A — десктопний застосунок, що надає україномовний голосовий супровід та керування для гри Star Citizen
+[🇺🇦 Українська](README.md) · [🇬🇧 English](README.en.md) · [🇩🇪 Deutsch](README.de.md)
 
-🎙️ "Л.І.А" — це ваш персональний голосовий асистент у Всесвіті Star Citizen. Вона реагує на ваші голосові команди, допомагає в управлінні, орієнтується у польоті, орієнтується у FPS режимі, та просто створює неймовірну атмосферу гри українською мовою.
+# Л.І.А — голосовий асистент для Star Citizen
 
-Що вміє L.I.A.?
+Л.І.А — Windows-застосунок для голосового й клавіатурного керування у Star Citizen. Асистент розпізнає команди, натискає призначені клавіші, озвучує відповіді та реагує на доступні ігрові події.
 
-🎮 Керування та взаємодія
+## 🎮 Керування та взаємодія
 
-✅ Керувати космічними кораблями та наземною технікою за допомогою голосових команд.
+✅ **Понад 90 вбудованих команд** для кораблів, наземної техніки та взаємодії з інтерфейсом гри.
 
-✅ Реагувати на голос, натискання клавіш та внутрішньоігрові події.
+✅ Керуйте шасі, живленням, двигунами, щитами, зброєю, розподілом енергії, режимами польоту, цілями, шлюзами, картою, мобігласом, радаром і самознищенням корабля.
 
-✅ Розпізнавати тип техніки, якою керує пілот.
+✅ Додаткові фрази допоможуть ознайомитися з асистентом, прослухати базову чи розширену довідку, зупинити відтворення або почути жартівливу відповідь.
 
-✅ Надавати голосову довідку про планети та супутники.
+✅ Призначайте командам клавіші й модифікатори, налаштовуйте повторення, подвійне натискання або утримання.
 
-🎙️ Персоналізація та TTS
+✅ Для команд перемикання стану можна призначити одну клавішу на обидві дії в парі — наприклад, випускання й прибирання шасі. Л.І.А визначить поточний стан і вибере потрібну дію для шасі, живлення, двигунів, зброї та щитів.
 
-✅ Створювати власні голосові команди та налаштовувати їхню поведінку.
+✅ Оберіть постійне прослуховування з перемиканням у вікні застосунку або режим Push-to-Talk: мікрофон активний лише поки утримується призначена клавіша.
 
-✅ Додавати власні голосові реакції L.I.A., які генеруються та озвучуються за допомогою TTS.
+### ✨ Власні команди
 
-✅ Використовувати різні голоси для української, англійської та німецької мов.
+🌟 Створюйте команди під свій стиль гри: задавайте фразу розпізнавання й синоніми, призначайте клавішу та додавайте власну озвучену відповідь Л.І.А.
 
-🚀 Ігрові можливості
+✅ Налаштування власних команд зберігаються окремо для української, англійської та німецької мов — перемикайте мову, не втрачаючи своїх варіантів.
 
-✅ Надавати голосову інформацію про знищені ворожі цілі у FPS-режимі, розрізняючи гравців, пілотів, наземні цілі, хробаків та тварин.
+## 🛰️ Реакція на події гри
 
-✅ Повідомляти про стан ворожих кораблів: виведення з ладу, Soft Death та повне знищення.
+Л.І.А підлаштовує доступні команди до ситуації у грі та озвучує вибрані ігрові події.
 
-✅ Озвучувати та синхронізувати з грою перехід між зоряними системами.
+✅ Визначає, чи гравець у кораблі або наземному транспорті, і відповідно обмежує команди.
 
-✅ Озвучені діалоги Вікелло (для української та німецької версій).
+✅ Показує стан живлення, двигунів, зброї, щитів, охолоджувачів і шасі.
 
-⚙️ Озвучення місій — у процесі розробки (для української та німецької версій).
+✅ Озвучує попередження про ракетну небезпеку й небезпечне зближення або зіткнення.
 
-Додаткова інформація
+✅ Реагує на відповідь диспетчера про дозвіл на стикування.
 
-⚠️ Програма не втручається в ігрові файли та процеси й не порушує політику безпеки CIG.
+✅ Озвучує знищення та виведення з ладу кораблів, наземної техніки й супутників, а також події з пілотами, гравцями, NPC, тваринами й червами. Розрізняє кораблі гравців і NPC. Коментарі за серії: 10 цілей, 5 кораблів або 5 тварин.
 
-⚠️ Починаючи з версії 1.1.0.0, L.I.A. є повністю самостійним застосунком і більше не потребує сторонніх програм, зокрема VoiceAttack.
+✅ Відтворює локалізовані репліки The Collector українською та німецькою. В англійській версії вони не дублюються, оскільки персонажа озвучує сама гра.
+
+✅ Надає голосову довідку про локації Star Citizen, зокрема планети та супутники.
+
+⚙️ Попередження про ракетну небезпеку й зіткнення, сповіщення про стикування та kill-події, коментарі за серії й діалоги можна налаштовувати окремо.
+
+## 🎙️ Мови, озвучення та персоналізація
+
+ℹ️ Інтерфейс і вбудовані команди доступні українською, англійською та німецькою. Під час першого запуску можна вибрати мову; українська встановлена за замовчуванням. Мову можна змінити без перезапуску застосунку. Українська — основна мова Л.І.А.; голосові відповіді синтезуються й додатково обробляються, а набір реплік поступово розширюється.
+
+✅ Для англійської використовується голос Amy, для німецької — Eva K.
+
+🚧 Англійський і німецький голоси ще не остаточні та будуть додатково налаштовуватися.
+
+✅ У текстах власних голосових відповідей можна задавати правила вимови й пауз.
+
+## ⚙️ Налаштування, встановлення та оновлення
+
+✅ Світла й темна теми, регулювання гучності, звуки натискання клавіш і голосові повідомлення асистента.
+
+✅ Окреме вмикання та вимикання ігрових сповіщень і обробників.
+
+✅ Можна згортати застосунок у системний трей.
+
+✅ Інсталятор дає змогу створити ярлик на робочому столі та в меню «Пуск». Під час видалення можна прибрати всі дані L.I.A або зберегти користувацькі налаштування.
+
+✅ Застосунок повідомляє про доступну версію та автоматично завантажує й запускає її встановлення.
+
+## 🚧 Поточний статус
+
+- Повне озвучення місій — у розробці.
+- Озвучення та синхронізація гіперпереходів у поточній версії не підтримуються.
+- Англійський і німецький голоси залишаються в роботі; якість і звучання ще допрацьовуються.
 
 Насолоджуйтесь грою з україномовним голосовим супроводом!
 
@@ -53,98 +85,3 @@
 [![🎁 Реєструйтесь за реферальним посиланням та отримуйте додатковий бонус](https://img.shields.io/badge/🎁_Реєструйтесь_за_реферальним_посиланням_та_отримуйте_додатковий_бонус-ff9800?style=flat)](https://www.robertsspaceindustries.com/enlist?referral=STAR-C9GM-T4HJ)
 
 Зоряних пригод, Капітане! Зустрінемось серед зірок ✨
-
-#
-**English Version**
-#
-Welcome to L.I.A — your personal desktop voice assistant for Star Citizen, providing English-language voice support and intuitive voice control in the game.
-
-🎙️ L.I.A is your personal voice assistant in the Star Citizen universe. She responds to your voice commands, helps you control your spacecraft and vehicles, assists you both in flight and FPS mode, and brings an entirely new level of immersion to your gaming experience.
-
-What can L.I.A do?
-
-🎮 Controls & Interaction
-
-✅ Control spaceships and ground vehicles using voice commands.
-
-✅ Respond to voice input, keyboard presses, and in-game events.
-
-✅ Identify the type of vehicle currently being piloted.
-
-✅ Provide voice information about planets and moons.
-
-🎙️ Customization & TTS
-
-✅ Create your own voice commands and customize their behavior.
-
-✅ Add custom voice responses for L.I.A., generated and spoken using Text-to-Speech (TTS).
-
-✅ Use different voices for Ukrainian, English, and German.
-
-🚀 In-Game Features
-
-✅ Receive voice notifications about eliminated hostile targets in FPS mode, distinguishing between players, pilots, ground targets, worms, and animals.
-
-✅ Get voice notifications about enemy ship status, including disabled ships, Soft Death, and complete destruction.
-
-✅ Hear synchronized voice announcements when traveling between star systems.
-
-Additional Information
-
-⚠️ L.I.A does not modify game files or interfere with the game process and does not violate CIG's security policies.
-
-⚠️ Starting with version 1.1.0.0, L.I.A is a fully standalone application and no longer requires third-party software, including VoiceAttack.
-
-[![▶️ YouTube](https://img.shields.io/badge/_Watch_Demo-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
-
-Fly safe, Captain! See you among the stars ✨
-
-#
-**Deutsche Version**
-#
-
-Willkommen bei L.I.A — deinem persönlichen Desktop-Sprachassistenten für Star Citizen, der dir deutschsprachige Sprachunterstützung und eine intuitive Sprachsteuerung im Spiel bietet.
-
-🎙️ L.I.A ist deine persönliche Sprachassistentin im Star-Citizen-Universum. Sie reagiert auf deine Sprachbefehle, unterstützt dich bei der Steuerung deines Raumschiffs und deiner Fahrzeuge, hilft dir sowohl im Flug als auch im FPS-Modus und sorgt für ein völlig neues Spielerlebnis mit ukrainischer Sprachausgabe.
-
-Was kann L.I.A?
-
-🎮 Steuerung & Interaktion
-
-✅ Raumschiffe und Bodenfahrzeuge per Sprachbefehl steuern.
-
-✅ Auf Spracheingaben, Tastendrücke und Ereignisse im Spiel reagieren.
-
-✅ Den Fahrzeugtyp erkennen, den der Pilot gerade steuert.
-
-✅ Sprachinformationen über Planeten und Monde bereitstellen.
-
-🎙️ Personalisierung & TTS
-
-✅ Eigene Sprachbefehle erstellen und deren Verhalten individuell konfigurieren.
-
-✅ Eigene Sprachreaktionen für L.I.A. hinzufügen, die mithilfe von Text-to-Speech (TTS) generiert und ausgegeben werden.
-
-✅ Verschiedene Stimmen für Ukrainisch, Englisch und Deutsch verwenden.
-
-🚀 Spielfunktionen
-
-✅ Sprachmeldungen über ausgeschaltete gegnerische Ziele im FPS-Modus erhalten. Dabei wird zwischen Spielern, Piloten, Bodenzielen, Würmern und Tieren unterschieden.
-
-✅ Informationen über den Zustand feindlicher Schiffe erhalten, einschließlich kampfunfähiger Schiffe, Soft Death und vollständiger Zerstörung.
-
-✅ Den Wechsel zwischen Sternensystemen mit synchronisierten Sprachausgaben begleiten lassen.
-
-✅ Vollständig vertonte Vikello-Dialoge (verfügbar in der ukrainischen und deutschen Version).
-
-⚙️ Vertonung von Missionen — derzeit in Entwicklung (für die ukrainische und deutsche Version).
-
-Weitere Informationen
-
-⚠️ L.I.A verändert weder Spieldateien noch den Spielprozess und verstößt nicht gegen die Sicherheitsrichtlinien von CIG.
-
-⚠️ Seit Version 1.1.0.0 ist L.I.A eine vollständig eigenständige Anwendung und benötigt keine zusätzliche Software von Drittanbietern, einschließlich VoiceAttack.
-
-[![▶️ YouTube](https://img.shields.io/badge/_Demovideo_ansehen-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
-
-Allzeit guten Flug, Captain! Wir sehen uns zwischen den Sternen ✨
