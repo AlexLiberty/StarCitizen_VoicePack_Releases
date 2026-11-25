@@ -75,7 +75,7 @@
 - Англійський і німецький голоси залишаються в роботі; якість і звучання ще допрацьовуються.
 
 Насолоджуйтесь грою з україномовним голосовим супроводом!
-
+#
 [![▶️ YouTube](https://img.shields.io/badge/_Демонстраційне_відео-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtu.be/4AwL8TKXcTU)
 
 [![UA](https://img.shields.io/badge/🇺🇦-Українізатор%20Star%20Citizen-0057B7?style=flat&labelColor=FFD700)](https://scloc.pp.ua/)
